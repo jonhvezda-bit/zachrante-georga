@@ -1,0 +1,1921 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ZACHRAŇTE GEORGA</title>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  background:#02050d;
+  color:white;
+  font-family:Arial,Helvetica,sans-serif;
+  overflow:hidden;
+}
+
+body{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+#wrap{
+  width:min(1200px,100vw);
+  height:min(720px,100vh);
+  position:relative;
+  overflow:hidden;
+  background:#02050d;
+}
+
+canvas{
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+
+/* ================= MENU ================= */
+
+#menu{
+  position:absolute;
+  inset:0;
+  z-index:20;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  overflow:hidden;
+}
+
+#menuImage{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+#menuDark{
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(
+      rgba(0,0,0,.15),
+      rgba(0,0,0,.80)
+    );
+}
+
+#menuContent{
+  position:relative;
+  z-index:2;
+}
+
+#menuTitle{
+  font-size:clamp(40px,7vw,85px);
+  margin:0 0 15px;
+  letter-spacing:5px;
+  text-shadow:
+    0 0 15px #58b7ff,
+    0 0 35px rgba(50,160,255,.8);
+}
+
+#menuSubtitle{
+  font-size:20px;
+  color:#d7edff;
+  margin-bottom:35px;
+  text-shadow:0 2px 8px #000;
+}
+
+button{
+  border:1px solid #7fc9ff;
+  border-radius:10px;
+  background:#12385b;
+  color:white;
+  font-size:21px;
+  font-weight:bold;
+  padding:15px 35px;
+  cursor:pointer;
+  box-shadow:0 0 25px rgba(75,180,255,.35);
+}
+
+button:hover{
+  background:#1d5585;
+  transform:scale(1.04);
+}
+
+#musicButton{
+  display:block;
+  margin:15px auto 0;
+  font-size:14px;
+  padding:9px 18px;
+  background:rgba(0,0,0,.55);
+}
+
+
+/* ================= HUD ================= */
+
+#hud{
+  position:absolute;
+  top:14px;
+  left:14px;
+  right:14px;
+  display:none;
+  justify-content:space-between;
+  gap:15px;
+  z-index:5;
+  pointer-events:none;
+}
+
+.hudBox{
+  background:rgba(0,7,18,.75);
+  border:1px solid rgba(130,205,255,.4);
+  padding:9px 13px;
+  border-radius:9px;
+}
+
+#oxygenBar{
+  width:180px;
+  height:12px;
+  background:#1b2430;
+  border-radius:8px;
+  overflow:hidden;
+  margin-top:5px;
+}
+
+#oxygenFill{
+  width:100%;
+  height:100%;
+  background:#68d4ff;
+}
+
+
+/* ================= CUTSCÉNA ================= */
+
+#cutscene{
+  position:absolute;
+  inset:0;
+  z-index:15;
+  display:none;
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(15,35,65,.65),
+      rgba(0,0,0,.96)
+    );
+}
+
+#cutsceneCharacter{
+  position:absolute;
+  left:50%;
+  top:42%;
+
+  width:220px;
+  height:220px;
+
+  object-fit:contain;
+
+  transform:
+    translate(-50%,-50%)
+    scale(.75);
+
+  opacity:0;
+
+  transition:
+    transform .5s ease,
+    opacity .4s ease;
+
+  filter:
+    drop-shadow(0 0 25px rgba(80,190,255,.8));
+}
+
+#cutsceneCharacter.show{
+  opacity:1;
+
+  transform:
+    translate(-50%,-50%)
+    scale(1.12);
+}
+
+#cutsceneName{
+  position:absolute;
+  top:66%;
+  left:50%;
+  transform:translateX(-50%);
+
+  font-size:34px;
+  font-weight:bold;
+  letter-spacing:5px;
+
+  text-shadow:
+    0 0 15px #58b7ff,
+    0 2px 8px #000;
+}
+
+#cutsceneText{
+  position:absolute;
+  left:50%;
+  bottom:9%;
+  transform:translateX(-50%);
+
+  width:min(850px,90%);
+
+  padding:18px 25px;
+
+  background:rgba(0,8,20,.75);
+  border:1px solid rgba(130,205,255,.4);
+
+  border-radius:12px;
+
+  font-size:19px;
+  text-align:center;
+}
+
+#skipButton{
+  position:absolute;
+  right:18px;
+  bottom:18px;
+
+  font-size:13px;
+  padding:8px 14px;
+
+  opacity:.75;
+}
+
+
+/* ================= KONEC ================= */
+
+#end{
+  position:absolute;
+  inset:0;
+
+  display:none;
+
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+
+  text-align:center;
+
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(18,35,65,.75),
+      rgba(0,0,0,.96)
+    );
+
+  z-index:10;
+}
+
+#endTitle{
+  font-size:60px;
+  margin-bottom:10px;
+  text-shadow:0 0 25px #58b7ff;
+}
+
+#endText{
+  max-width:800px;
+  line-height:1.5;
+}
+</style>
+</head>
+
+
+<body>
+
+<div id="wrap">
+
+<canvas id="game" width="1200" height="720"></canvas>
+
+
+<!-- ================= MENU ================= -->
+
+<div id="menu">
+
+  <img
+    id="menuImage"
+    src="space_crew.png"
+    alt=""
+  >
+
+  <div id="menuDark"></div>
+
+  <div id="menuContent">
+
+    <h1 id="menuTitle">
+      ZACHRAŇTE GEORGA
+    </h1>
+
+    <div id="menuSubtitle">
+      Mise: najděte 10 součástek a zachraňte kapitána George.
+    </div>
+
+    <button id="startButton">
+      ZAPNOUT MISI
+    </button>
+
+    <button id="musicButton">
+      🔊 HUDBA ZAPNUTA
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- ================= HUD ================= -->
+
+<div id="hud">
+
+  <div class="hudBox">
+
+    <div>
+      KYSLÍK:
+      <b id="oxygenText">100%</b>
+    </div>
+
+    <div id="oxygenBar">
+      <div id="oxygenFill"></div>
+    </div>
+
+  </div>
+
+
+  <div class="hudBox">
+
+    SOUČÁSTKY:
+    <b id="partsText">0 / 10</b>
+
+  </div>
+
+
+  <div class="hudBox">
+
+    ⬅ WASD / ŠIPKY ➡
+
+  </div>
+
+</div>
+
+
+<!-- ================= CUTSCÉNA ================= -->
+
+<div id="cutscene">
+
+  <img
+    id="cutsceneCharacter"
+    src=""
+    alt=""
+  >
+
+  <div id="cutsceneName"></div>
+
+  <div id="cutsceneText"></div>
+
+  <button id="skipButton">
+    PŘESKOČIT
+  </button>
+
+</div>
+
+
+<!-- ================= KONEC ================= -->
+
+<div id="end">
+
+  <h1 id="endTitle"></h1>
+
+  <h2 id="endText"></h2>
+
+  <button id="restartButton">
+    HRÁT ZNOVU
+  </button>
+
+</div>
+
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   ZÁKLAD
+===================================================== */
+
+const canvas =
+  document.getElementById("game");
+
+const ctx =
+  canvas.getContext("2d");
+
+const W = canvas.width;
+const H = canvas.height;
+
+
+/* =====================================================
+   OVLÁDÁNÍ
+===================================================== */
+
+const keys = {};
+
+window.addEventListener(
+  "keydown",
+  function(e){
+
+    keys[e.key.toLowerCase()] = true;
+
+    if(
+      [
+        "arrowup",
+        "arrowdown",
+        "arrowleft",
+        "arrowright",
+        " "
+      ].includes(e.key.toLowerCase())
+    ){
+      e.preventDefault();
+    }
+
+  }
+);
+
+
+window.addEventListener(
+  "keyup",
+  function(e){
+
+    keys[e.key.toLowerCase()] = false;
+
+  }
+);
+
+
+/* =====================================================
+   PROMĚNNÉ
+===================================================== */
+
+let running = false;
+
+let lastTime = 0;
+
+let oxygen = 100;
+
+let parts = 0;
+
+let asteroids = [];
+
+let oxygenItems = [];
+
+let partItems = [];
+
+let stars = [];
+
+let currentSound = null;
+
+let music = null;
+
+let musicEnabled = true;
+
+let cutsceneIndex = 0;
+
+let cutsceneRunning = false;
+
+
+/* =====================================================
+   HRÁČ
+===================================================== */
+
+const jan = {
+
+  x: W/2,
+
+  y: H/2,
+
+  r: 38,
+
+  speed: 290
+
+};
+
+
+/* =====================================================
+   OBRÁZKY
+===================================================== */
+
+const janImage =
+  new Image();
+
+const georgeImage =
+  new Image();
+
+const menuImage =
+  new Image();
+
+
+janImage.src =
+  "jan_head.png";
+
+georgeImage.src =
+  "george_head.png";
+
+menuImage.src =
+  "space_crew.png";
+
+
+/* =====================================================
+   HVĚZDY
+===================================================== */
+
+for(let i=0;i<180;i++){
+
+  stars.push({
+
+    x:Math.random()*W,
+
+    y:Math.random()*H,
+
+    r:Math.random()*1.8+.2,
+
+    a:Math.random()*.8+.2
+
+  });
+
+}
+
+
+/* =====================================================
+   ZVUKY
+===================================================== */
+
+const sounds = {
+
+  1:"1.mp3",
+
+  2:"2.mp3",
+
+  3:"3.mp3",
+
+  4:"4.mp3",
+
+  5:"5.mp3",
+
+  6:"6.mp3",
+
+  7:"7.mp3",
+
+  8:"8.mp3"
+
+};
+
+
+/* =====================================================
+   HUDBA
+===================================================== */
+
+function startMusic(){
+
+  if(!musicEnabled)
+    return;
+
+  if(!music){
+
+    music =
+      new Audio("hudbak.mp3");
+
+    music.loop = true;
+
+    music.volume = .35;
+
+  }
+
+  music.play().catch(function(){});
+
+}
+
+
+function stopMusic(){
+
+  if(music){
+
+    music.pause();
+
+  }
+
+}
+
+
+document
+  .getElementById("musicButton")
+  .onclick = function(){
+
+    musicEnabled =
+      !musicEnabled;
+
+    if(musicEnabled){
+
+      startMusic();
+
+      this.textContent =
+        "🔊 HUDBA ZAPNUTA";
+
+    }else{
+
+      stopMusic();
+
+      this.textContent =
+        "🔇 HUDBA VYPNUTA";
+
+    }
+
+  };
+
+
+/* =====================================================
+   ZVUK
+===================================================== */
+
+function stopSound(){
+
+  if(currentSound){
+
+    currentSound.pause();
+
+    currentSound.currentTime = 0;
+
+    currentSound = null;
+
+  }
+
+}
+
+
+function playSound(number,finished){
+
+  stopSound();
+
+  const sound =
+    new Audio(sounds[number]);
+
+  currentSound =
+    sound;
+
+  sound.volume = .9;
+
+  if(finished){
+
+    sound.addEventListener(
+      "ended",
+      finished,
+      {once:true}
+    );
+
+  }
+
+  sound.play().catch(function(){});
+
+}
+
+
+/* =====================================================
+   RESET HRY
+===================================================== */
+
+function resetGame(){
+
+  oxygen = 100;
+
+  parts = 0;
+
+  asteroids = [];
+
+  oxygenItems = [];
+
+  partItems = [];
+
+
+  for(let i=0;i<7;i++){
+
+    spawnAsteroid();
+
+  }
+
+
+  for(let i=0;i<8;i++){
+
+    oxygenItems.push({
+
+      x:random(70,W-70),
+
+      y:random(110,H-70),
+
+      r:15,
+
+      pulse:random(0,6)
+
+    });
+
+  }
+
+
+  for(let i=0;i<10;i++){
+
+    partItems.push({
+
+      x:random(90,W-90),
+
+      y:random(120,H-90),
+
+      r:14,
+
+      pulse:random(0,6)
+
+    });
+
+  }
+
+
+  jan.x = W/2;
+
+  jan.y = H/2;
+
+}
+
+
+/* =====================================================
+   RANDOM
+===================================================== */
+
+function random(a,b){
+
+  return Math.random()*(b-a)+a;
+
+}
+
+
+/* =====================================================
+   ASTEROID
+===================================================== */
+
+function spawnAsteroid(){
+
+  const side =
+    Math.floor(Math.random()*4);
+
+  const r =
+    random(18,40);
+
+  let x,y,vx,vy;
+
+
+  if(side===0){
+
+    x=-r;
+
+    y=random(70,H);
+
+    vx=random(50,150);
+
+    vy=random(-90,90);
+
+  }
+
+
+  if(side===1){
+
+    x=W+r;
+
+    y=random(70,H);
+
+    vx=-random(50,150);
+
+    vy=random(-90,90);
+
+  }
+
+
+  if(side===2){
+
+    x=random(0,W);
+
+    y=-r;
+
+    vx=random(-90,90);
+
+    vy=random(50,150);
+
+  }
+
+
+  if(side===3){
+
+    x=random(0,W);
+
+    y=H+r;
+
+    vx=random(-90,90);
+
+    vy=-random(50,150);
+
+  }
+
+
+  asteroids.push({
+
+    x:x,
+
+    y:y,
+
+    vx:vx,
+
+    vy:vy,
+
+    r:r,
+
+    rot:random(0,6),
+
+    spin:random(-1.5,1.5)
+
+  });
+
+}
+
+
+/* =====================================================
+   CUTSCÉNA
+===================================================== */
+
+const scenes = [
+
+  {
+
+    number:1,
+
+    name:"JAN",
+
+    image:"jan_head.png",
+
+    text:
+      "Musíme najít všechny součástky. George je tam někde venku!"
+
+  },
+
+  {
+
+    number:2,
+
+    name:"GEORGE",
+
+    image:"george_head.png",
+
+    text:
+      "JANE! JDU NA TO! Najdi mě a zachraň mě!"
+
+  },
+
+  {
+
+    number:3,
+
+    name:"JAN",
+
+    image:"jan_head.png",
+
+    text:
+      "Dobře, George. Jdu na to!"
+
+  }
+
+];
+
+
+function startCutscene(){
+
+  cutsceneRunning =
+    true;
+
+  cutsceneIndex =
+    0;
+
+  document
+    .getElementById("cutscene")
+    .style.display =
+    "block";
+
+  showScene();
+
+}
+
+
+function showScene(){
+
+  if(cutsceneIndex >= scenes.length){
+
+    finishCutscene();
+
+    return;
+
+  }
+
+
+  const scene =
+    scenes[cutsceneIndex];
+
+
+  const character =
+    document.getElementById(
+      "cutsceneCharacter"
+    );
+
+
+  document
+    .getElementById("cutsceneName")
+    .textContent =
+    scene.name;
+
+
+  document
+    .getElementById("cutsceneText")
+    .textContent =
+    scene.text;
+
+
+  character.classList.remove("show");
+
+
+  character.src =
+    scene.image;
+
+
+  if(scene.number === 2){
+
+    character.style.width =
+      "300px";
+
+    character.style.height =
+      "300px";
+
+  }else{
+
+    character.style.width =
+      "220px";
+
+    character.style.height =
+      "220px";
+
+  }
+
+
+  setTimeout(function(){
+
+    character.classList.add("show");
+
+  },100);
+
+
+  playSound(
+    scene.number,
+    function(){
+
+      if(!cutsceneRunning)
+        return;
+
+      cutsceneIndex++;
+
+      showScene();
+
+    }
+  );
+
+}
+
+
+/* =====================================================
+   KONEC CUTSCÉNY
+===================================================== */
+
+function finishCutscene(){
+
+  cutsceneRunning =
+    false;
+
+  stopSound();
+
+
+  document
+    .getElementById("cutscene")
+    .style.display =
+    "none";
+
+
+  resetGame();
+
+
+  document
+    .getElementById("hud")
+    .style.display =
+    "flex";
+
+
+  running =
+    true;
+
+  lastTime =
+    performance.now();
+
+
+  requestAnimationFrame(gameLoop);
+
+}
+
+
+document
+  .getElementById("skipButton")
+  .onclick =
+  function(){
+
+    cutsceneRunning =
+      false;
+
+    stopSound();
+
+    finishCutscene();
+
+  };
+
+
+/* =====================================================
+   START
+===================================================== */
+
+document
+  .getElementById("startButton")
+  .onclick =
+  function(){
+
+    startMusic();
+
+
+    document
+      .getElementById("menu")
+      .style.display =
+      "none";
+
+
+    document
+      .getElementById("end")
+      .style.display =
+      "none";
+
+
+    document
+      .getElementById("hud")
+      .style.display =
+      "none";
+
+
+    running =
+      false;
+
+
+    startCutscene();
+
+  };
+
+
+/* =====================================================
+   RESTART
+===================================================== */
+
+document
+  .getElementById("restartButton")
+  .onclick =
+  function(){
+
+    document
+      .getElementById("end")
+      .style.display =
+      "none";
+
+
+    startMusic();
+
+
+    startCutscene();
+
+  };
+
+
+/* =====================================================
+   VZDÁLENOST
+===================================================== */
+
+function distance(a,b){
+
+  return Math.hypot(
+    a.x-b.x,
+    a.y-b.y
+  );
+
+}
+
+
+/* =====================================================
+   KONEC HRY
+===================================================== */
+
+function endGame(win,reason){
+
+  running =
+    false;
+
+  stopSound();
+
+
+  if(win){
+
+    playSound(8);
+
+  }
+
+
+  document
+    .getElementById("hud")
+    .style.display =
+    "none";
+
+
+  document
+    .getElementById("end")
+    .style.display =
+    "flex";
+
+
+  document
+    .getElementById("endTitle")
+    .textContent =
+    win
+      ? "GEORGE JE ZACHRÁNĚN!"
+      : "MISE SELHALA";
+
+
+  document
+    .getElementById("endText")
+    .textContent =
+    reason;
+
+}
+
+
+/* =====================================================
+   PROSTOR
+===================================================== */
+
+function drawSpace(){
+
+  const gradient =
+    ctx.createLinearGradient(
+      0,0,W,H
+    );
+
+
+  gradient.addColorStop(
+    0,
+    "#020611"
+  );
+
+
+  gradient.addColorStop(
+    1,
+    "#071b35"
+  );
+
+
+  ctx.fillStyle =
+    gradient;
+
+
+  ctx.fillRect(
+    0,0,W,H
+  );
+
+
+  stars.forEach(function(star){
+
+    ctx.globalAlpha =
+      star.a;
+
+    ctx.fillStyle =
+      "white";
+
+    ctx.beginPath();
+
+    ctx.arc(
+      star.x,
+      star.y,
+      star.r,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fill();
+
+  });
+
+
+  ctx.globalAlpha = 1;
+
+
+  ctx.save();
+
+  ctx.globalAlpha = .2;
+
+  ctx.fillStyle =
+    "#2b83d6";
+
+
+  ctx.beginPath();
+
+  ctx.arc(
+    W*.78,
+    H*1.08,
+    250,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+
+  ctx.restore();
+
+}
+
+
+/* =====================================================
+   ASTEROID KRESLENÍ
+===================================================== */
+
+function drawAsteroid(a){
+
+  ctx.save();
+
+
+  ctx.translate(
+    a.x,
+    a.y
+  );
+
+
+  ctx.rotate(
+    a.rot
+  );
+
+
+  ctx.fillStyle =
+    "#717784";
+
+
+  ctx.strokeStyle =
+    "#aab1bb";
+
+
+  ctx.lineWidth = 2;
+
+
+  ctx.beginPath();
+
+
+  for(let i=0;i<9;i++){
+
+    const angle =
+      i*Math.PI*2/9;
+
+    const radius =
+      a.r*random(.75,1.18);
+
+
+    const x =
+      Math.cos(angle)*radius;
+
+    const y =
+      Math.sin(angle)*radius;
+
+
+    if(i===0){
+
+      ctx.moveTo(x,y);
+
+    }else{
+
+      ctx.lineTo(x,y);
+
+    }
+
+  }
+
+
+  ctx.closePath();
+
+  ctx.fill();
+
+  ctx.stroke();
+
+
+  ctx.restore();
+
+}
+
+
+/* =====================================================
+   PŘEDMĚTY
+===================================================== */
+
+function drawItem(item,type){
+
+  const pulse =
+    1+
+    Math.sin(
+      performance.now()/300+
+      item.pulse
+    )*.15;
+
+
+  ctx.save();
+
+
+  ctx.translate(
+    item.x,
+    item.y
+  );
+
+
+  ctx.scale(
+    pulse,
+    pulse
+  );
+
+
+  if(type==="oxygen"){
+
+    ctx.fillStyle =
+      "#bfefff";
+
+    ctx.strokeStyle =
+      "#58cfff";
+
+    ctx.lineWidth = 3;
+
+
+    ctx.fillRect(
+      -10,
+      -17,
+      20,
+      34
+    );
+
+
+    ctx.strokeRect(
+      -10,
+      -17,
+      20,
+      34
+    );
+
+
+    ctx.fillStyle =
+      "#58cfff";
+
+    ctx.font =
+      "bold 12px Arial";
+
+    ctx.textAlign =
+      "center";
+
+    ctx.fillText(
+      "O₂",
+      0,
+      4
+    );
+
+  }else{
+
+    ctx.fillStyle =
+      "#ffd86b";
+
+    ctx.strokeStyle =
+      "#fff0a8";
+
+    ctx.lineWidth = 2;
+
+
+    ctx.fillRect(
+      -12,
+      -12,
+      24,
+      24
+    );
+
+
+    ctx.strokeRect(
+      -12,
+      -12,
+      24,
+      24
+    );
+
+
+    ctx.fillStyle =
+      "#5c4720";
+
+
+    ctx.fillRect(
+      -5,
+      -5,
+      10,
+      10
+    );
+
+  }
+
+
+  ctx.restore();
+
+}
+
+
+/* =====================================================
+   JAN
+===================================================== */
+
+function drawJan(){
+
+  if(janImage.complete){
+
+    ctx.drawImage(
+      janImage,
+      jan.x-48,
+      jan.y-48,
+      96,
+      96
+    );
+
+  }else{
+
+    ctx.fillStyle =
+      "#ddd";
+
+    ctx.beginPath();
+
+    ctx.arc(
+      jan.x,
+      jan.y,
+      jan.r,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fill();
+
+  }
+
+}
+
+
+/* =====================================================
+   GEORGE
+===================================================== */
+
+function drawGeorge(){
+
+  const x =
+    W-95;
+
+  const y =
+    H-95;
+
+
+  if(georgeImage.complete){
+
+    ctx.drawImage(
+      georgeImage,
+      x-55,
+      y-55,
+      110,
+      110
+    );
+
+  }
+
+
+  ctx.fillStyle =
+    "white";
+
+  ctx.font =
+    "bold 16px Arial";
+
+  ctx.textAlign =
+    "center";
+
+  ctx.fillText(
+    "GEORGE",
+    x,
+    y+70
+  );
+
+}
+
+
+/* =====================================================
+   HLAVNÍ HERNÍ SMYČKA
+===================================================== */
+
+function gameLoop(time){
+
+  if(!running)
+    return;
+
+
+  const dt =
+    Math.min(
+      (time-lastTime)/1000,
+      .033
+    );
+
+
+  lastTime =
+    time;
+
+
+  /* ---------- POHYB ---------- */
+
+  let dx =
+
+    (keys["arrowright"] ||
+     keys["d"] ? 1 : 0)
+
+    -
+
+    (keys["arrowleft"] ||
+     keys["a"] ? 1 : 0);
+
+
+  let dy =
+
+    (keys["arrowdown"] ||
+     keys["s"] ? 1 : 0)
+
+    -
+
+    (keys["arrowup"] ||
+     keys["w"] ? 1 : 0);
+
+
+  const length =
+    Math.hypot(dx,dy) || 1;
+
+
+  jan.x +=
+    dx/length*
+    jan.speed*
+    dt;
+
+
+  jan.y +=
+    dy/length*
+    jan.speed*
+    dt;
+
+
+  jan.x =
+    Math.max(
+      45,
+      Math.min(
+        W-45,
+        jan.x
+      )
+    );
+
+
+  jan.y =
+    Math.max(
+      75,
+      Math.min(
+        H-45,
+        jan.y
+      )
+    );
+
+
+  /* ---------- KYSLÍK ---------- */
+
+  oxygen -=
+    dt*3.5;
+
+
+  if(oxygen<=0){
+
+    oxygen=0;
+
+    endGame(
+      false,
+      "Došel ti kyslík."
+    );
+
+    return;
+
+  }
+
+
+  /* ---------- ASTEROIDY ---------- */
+
+  if(
+    Math.random() <
+    dt*.75
+  ){
+
+    spawnAsteroid();
+
+  }
+
+
+  asteroids.forEach(
+    function(a){
+
+      a.x +=
+        a.vx*dt;
+
+      a.y +=
+        a.vy*dt;
+
+      a.rot +=
+        a.spin*dt;
+
+    }
+  );
+
+
+  asteroids =
+    asteroids.filter(
+      function(a){
+
+        return(
+          a.x>-100 &&
+          a.x<W+100 &&
+          a.y>-100 &&
+          a.y<H+100
+        );
+
+      }
+    );
+
+
+  for(
+    const asteroid of asteroids
+  ){
+
+    if(
+      distance(
+        jan,
+        asteroid
+      )
+      <
+      jan.r+
+      asteroid.r*.72
+    ){
+
+      running = false;
+stopSound();
+
+const crashSound = new Audio("7.mp3");
+crashSound.volume = 1.0;
+
+crashSound.play();
+
+crashSound.addEventListener(
+  "ended",
+  function(){
+    endGame(
+      false,
+      "Narazil jsi do asteroidu."
+    );
+  },
+  {once:true}
+);
+
+setTimeout(
+  function(){
+    if(
+      document.getElementById("end").style.display !== "flex"
+    ){
+      endGame(
+        false,
+        "Narazil jsi do asteroidu."
+      );
+    }
+  },
+  2500
+);
+
+return;
+
+    }
+
+  }
+
+
+  /* ---------- KYSLÍKOVÉ NÁDRŽE ---------- */
+
+  for(
+    let i=
+    oxygenItems.length-1;
+    i>=0;
+    i--
+  ){
+
+    if(
+      distance(
+        jan,
+        oxygenItems[i]
+      )
+      <
+      jan.r+18
+    ){
+
+      oxygen =
+        Math.min(
+          100,
+          oxygen+28
+        );
+
+
+      oxygenItems.splice(
+        i,
+        1
+      );
+
+    }
+
+  }
+
+
+  /* ---------- SOUČÁSTKY ---------- */
+
+  for(
+    let i=
+    partItems.length-1;
+    i>=0;
+    i--
+  ){
+
+    if(
+      distance(
+        jan,
+        partItems[i]
+      )
+      <
+      jan.r+18
+    ){
+
+      parts++;
+
+
+      partItems.splice(
+        i,
+        1
+      );
+
+
+      /* 4 / 5 / 6 náhodně */
+
+      const randomSound =
+        4+
+        Math.floor(
+          Math.random()*3
+        );
+
+
+      playSound(
+        randomSound
+      );
+
+
+      if(parts>=10){
+
+        setTimeout(
+          function(){
+
+            endGame(
+              true,
+              "Všech 10 součástek je sebraných. George může být zachráněn!"
+            );
+
+          },
+          900
+        );
+
+
+        return;
+
+      }
+
+    }
+
+  }
+
+
+  /* ---------- KRESLENÍ ---------- */
+
+  drawSpace();
+
+
+  oxygenItems.forEach(
+    function(item){
+
+      drawItem(
+        item,
+        "oxygen"
+      );
+
+    }
+  );
+
+
+  partItems.forEach(
+    function(item){
+
+      drawItem(
+        item,
+        "part"
+      );
+
+    }
+  );
+
+
+  asteroids.forEach(
+    drawAsteroid
+  );
+
+
+  drawGeorge();
+
+  drawJan();
+
+
+  /* ---------- HUD ---------- */
+
+  document
+    .getElementById(
+      "oxygenText"
+    )
+    .textContent =
+    Math.round(
+      oxygen
+    )+
+    "%";
+
+
+  document
+    .getElementById(
+      "oxygenFill"
+    )
+    .style.width =
+    oxygen+
+    "%";
+
+
+  document
+    .getElementById(
+      "partsText"
+    )
+    .textContent =
+    parts+
+    " / 10";
+
+
+  requestAnimationFrame(
+    gameLoop
+  );
+
+}
+
+
+/* =====================================================
+   PRVNÍ VYKRESLENÍ
+===================================================== */
+
+drawSpace();
+
+drawGeorge();
+
+</script>
+
+</body>
+</html>
