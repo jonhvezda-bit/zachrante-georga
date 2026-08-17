@@ -1915,6 +1915,97 @@ drawSpace();
 
 drawGeorge();
 
+
+
+
+
+</script>
+
+<!-- DOTYKOVÉ OVLÁDÁNÍ -->
+<div id="touchControls">
+  <button id="touchUp">▲</button>
+  <button id="touchLeft">◀</button>
+  <button id="touchRight">▶</button>
+  <button id="touchDown">▼</button>
+</div>
+
+<style>
+#touchControls {
+  display: none;
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  width: 180px;
+  height: 180px;
+  z-index: 20;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#touchControls button {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  border-radius: 15px;
+  border: 2px solid rgba(255,255,255,.5);
+  background: rgba(20,50,80,.8);
+  color: white;
+  font-size: 28px;
+  touch-action: none;
+}
+
+#touchUp {
+  left: 60px;
+  top: 0;
+}
+
+#touchLeft {
+  left: 0;
+  top: 60px;
+}
+
+#touchRight {
+  right: 0;
+  top: 60px;
+}
+
+#touchDown {
+  left: 60px;
+  bottom: 0;
+}
+
+@media (pointer: coarse) {
+  #touchControls {
+    display: block;
+  }
+}
+</style>
+
+<script>
+function setupTouchButton(id, key) {
+  const button = document.getElementById(id);
+
+  button.addEventListener("touchstart", function(e) {
+    e.preventDefault();
+    keys[key] = true;
+  }, {passive:false});
+
+  button.addEventListener("touchend", function(e) {
+    e.preventDefault();
+    keys[key] = false;
+  }, {passive:false});
+
+  button.addEventListener("touchcancel", function(e) {
+    e.preventDefault();
+    keys[key] = false;
+  }, {passive:false});
+}
+
+setupTouchButton("touchUp", "arrowup");
+setupTouchButton("touchDown", "arrowdown");
+setupTouchButton("touchLeft", "arrowleft");
+setupTouchButton("touchRight", "arrowright");
 </script>
 
 </body>
